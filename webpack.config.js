@@ -25,17 +25,17 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.js$/, // Transpile JavaScript files
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',
+          loader: 'babel-loader', // Use Babel for transpiling
           options: {
-            presets: ['@babel/preset-env'],
+            presets: ['@babel/preset-env'], // Use preset-env for modern JavaScript
           },
         },
       },
     ],
   },
-  mode: 'development',
-  devtool: 'source-map',
+  mode: 'development', // Set to 'production' for production builds
+  devtool: 'source-map', // Enable source maps for debugging
 };
