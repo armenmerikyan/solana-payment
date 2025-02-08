@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
+const { Buffer } = require('buffer');
 const { Connection, clusterApiUrl, Transaction, PublicKey, SystemProgram } = require('@solana/web3.js');
+
 const app = express();
 const port = 8081;
 
