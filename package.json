@@ -1,20 +1,26 @@
 {
-    "name": "your-project-name",
+    "name": "solana-send-app",
     "version": "1.0.0",
-    "description": "A description of your project",
-    "main": "src/app.js",
+    "description": "A simple app to send SOL from one wallet to another",
+    "main": "index.js",
     "scripts": {
-      "start": "node src/app.js",
-      "build": "webpack --mode production"
+      "start": "live-server"
     },
+    "keywords": [
+      "solana",
+      "web3",
+      "crypto",
+      "send",
+      "wallet"
+    ],
+    "author": "",
+    "license": "ISC",
     "dependencies": {
-      "express": "^4.17.1"
+      "@solana/web3.js": "^1.45.0"
     },
-    "devDependencies": {
-      "webpack": "^5.97.1",
-      "webpack-cli": "^5.0.0"
-    },
-    "author": "Your Name",
-    "license": "ISC"
+    "devDependencies": {},
+    "engines": {
+      "node": ">=14.0.0"
+    }
   }
   
