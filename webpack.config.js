@@ -20,6 +20,7 @@ module.exports = {
       "async_hooks": false, // Exclude `async_hooks`
       "vm": require.resolve("vm-browserify"), // Polyfill for `vm`
       "process": require.resolve("process/browser"), // Polyfill for `process`
+      "buffer": require.resolve("buffer/") // Polyfill for `buffer`
     },
   },
   module: {
