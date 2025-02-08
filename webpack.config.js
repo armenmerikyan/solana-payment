@@ -1,10 +1,10 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/app.js', // Your entry file
+  entry: './src/app.js',
   output: {
-    filename: 'bundle.js', // Output file name
-    path: path.resolve(__dirname, 'public/dist'), // Output directory inside 'public'
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'public/dist'),
   },
   resolve: {
     fallback: {
@@ -15,19 +15,20 @@ module.exports = {
       "stream": require.resolve("stream-browserify"),
       "querystring": require.resolve("querystring-es3"),
       "string_decoder": require.resolve("string_decoder"),
-      "net": false, // Exclude `net` module
-      "zlib": require.resolve("browserify-zlib"), // Polyfill for `zlib`
-      "async_hooks": false, // Exclude `async_hooks`
-      "vm": require.resolve("vm-browserify"), // Polyfill for `vm`
+      "net": false,
+      "zlib": require.resolve("browserify-zlib"),
+      "async_hooks": false,
+      "vm": require.resolve("vm-browserify"),
+      "process": require.resolve("process/browser"), // Polyfill for process
     },
   },
   module: {
     rules: [
       {
-        test: /\.js$/, // Transpile JavaScript files
+        test: /\.js$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader', // Use Babel for transpiling
+          loader: 'babel-loader',
           options: {
             presets: ['@babel/preset-env'],
           },
@@ -35,6 +36,6 @@ module.exports = {
       },
     ],
   },
-  mode: 'development', // Set to 'production' for production builds
-  devtool: 'source-map', // Enable source maps for debugging
+  mode: 'development',
+  devtool: 'source-map',
 };
