@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const { Buffer } = require('buffer');
+const { Buffer } = require('buffer');  // Ensure Buffer is imported
 const { Connection, clusterApiUrl, Transaction, PublicKey, SystemProgram } = require('@solana/web3.js');
 
 const app = express();
