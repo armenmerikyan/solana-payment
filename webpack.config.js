@@ -4,7 +4,7 @@ module.exports = {
   entry: './src/app.js', // Your entry file
   output: {
     filename: 'bundle.js', // Output file name
-    path: path.resolve(__dirname, 'dist'), // Output directory
+    path: path.resolve(__dirname, 'public/dist'), // Output directory inside 'public'
   },
   resolve: {
     fallback: {
