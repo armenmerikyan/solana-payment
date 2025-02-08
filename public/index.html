@@ -1,75 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pay with Solana</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pay with Solana</title>
+    <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.98.0/lib/index.iife.min.js"></script>
 </head>
 <body>
-  <h1>Pay with Solana</h1>
+    <h2>Pay with Solana</h2>
+    <label for="recipient">Recipient Address:</label>
+    <input type="text" id="recipient" placeholder="Enter recipient address">
+    <button id="connectWallet">Connect Wallet</button>
+    <button id="payButton" disabled>Pay</button>
+    <p id="status"></p>
 
-  <!-- Input field for recipient's wallet address -->
-  <label for="recipient">Recipient's Wallet Address:</label>
-  <input type="text" id="recipient" placeholder="Enter recipient's wallet address">
+    <script>
+        let provider = window.solana;
+        let senderPublicKey = null;
 
-  <!-- Button to trigger payment -->
-  <button id="payButton">Pay</button>
+        document.getElementById('connectWallet').addEventListener('click', async () => {
+            if (!provider || !provider.isPhantom) {
+                alert("Phantom wallet not detected. Please install it.");
+                return;
+            }
+            try {
+                const response = await provider.connect();
+                senderPublicKey = response.publicKey.toString();
+                document.getElementById('status').innerText = "Wallet connected: " + senderPublicKey;
+                document.getElementById('payButton').disabled = false;
+            } catch (error) {
+                console.error("Wallet connection failed", error);
+                document.getElementById('status').innerText = "Wallet connection failed.";
+            }
+        });
 
-  <!-- Include Solana Web3.js from CDN -->
-<script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.49.0/lib/index.iife.min.js"></script>
+        document.getElementById('payButton').addEventListener('click', async () => {
+            const recipient = document.getElementById('recipient').value.trim();
+            if (!recipient) {
+                alert("Please enter a recipient address.");
+                return;
+            }
 
-  <script>
-    const payButton = document.getElementById('payButton');
+            try {
+                const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('devnet'));
+                const senderKey = new solanaWeb3.PublicKey(senderPublicKey);
+                const recipientKey = new solanaWeb3.PublicKey(recipient);
+                const transaction = new solanaWeb3.Transaction().add(
+                    solanaWeb3.SystemProgram.transfer({
+                        fromPubkey: senderKey,
+                        toPubkey: recipientKey,
+                        lamports: solanaWeb3.LAMPORTS_PER_SOL * 0.01, // Send 0.01 SOL
+                    })
+                );
 
-    payButton.onclick = async function() {
-      // Fetch the recipient's wallet address from the input
-      const recipientAddress = document.getElementById('recipient').value;
-      if (!recipientAddress) {
-        alert("Please enter the recipient's wallet address.");
-        return;
-      }
+                transaction.feePayer = senderKey;
+                transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
 
-      try {
-        // Check if Phantom wallet is installed
-        const provider = window.solana;
-        if (provider && provider.isPhantom) {
-          // Get the sender's wallet (current connected wallet)
-          const senderWallet = await provider.request({ method: 'solana_requestAccounts' });
+                const signedTransaction = await provider.signTransaction(transaction);
+                const signature = await connection.sendRawTransaction(signedTransaction.serialize());
 
-          // Convert recipient address to PublicKey format
-          const toWallet = new solanaWeb3.PublicKey(recipientAddress);
-
-          // Sender's public key (current connected wallet)
-          const fromWallet = new solanaWeb3.PublicKey(senderWallet[0]);
-
-          // Convert SOL amount to lamports (1 SOL = 1 billion lamports)
-          const lamports = 100000000; // Example: 0.1 SOL
-
-          // Set up the transaction
-          const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('mainnet-beta'), 'confirmed');
-          const transaction = new solanaWeb3.Transaction().add(
-            solanaWeb3.SystemProgram.transfer({
-              fromPubkey: fromWallet,
-              toPubkey: toWallet,
-              lamports: lamports
-            })
-          );
-
-          // Sign and send the transaction with Phantom wallet
-          const signedTransaction = await provider.signTransaction(transaction);
-          const signature = await connection.sendRawTransaction(signedTransaction.serialize());
-
-          // Confirm the transaction
-          await connection.confirmTransaction(signature, 'confirmed');
-          alert("Transaction successful! Signature: " + signature);
-        } else {
-          alert("Please install Phantom wallet!");
-        }
-      } catch (error) {
-        console.error("Error processing payment:", error);
-        alert("Error processing payment: " + error.message);
-      }
-    };
-  </script>
+                document.getElementById('status').innerText = "Transaction sent! Signature: " + signature;
+                console.log("Transaction Signature:", signature);
+            } catch (error) {
+                console.error("Transaction failed", error);
+                document.getElementById('status').innerText = "Transaction failed.";
+            }
+        });
+    </script>
 </body>
 </html>
