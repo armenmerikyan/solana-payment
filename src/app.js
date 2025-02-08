@@ -10,7 +10,7 @@ const port = 8081;
 app.use(express.json());
 
 // Middleware to serve static files
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Set up Solana connection
 const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
