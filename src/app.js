@@ -31,6 +31,7 @@ app.post('/pay_with_sol', async (req, res) => {
 
     // Decode the signed transaction and send it to the blockchain
     const decodedTransaction = Transaction.from(Buffer.from(transaction, 'base64'));
+    
 
     // Send the transaction
     const signature = await connection.sendRawTransaction(decodedTransaction.serialize());

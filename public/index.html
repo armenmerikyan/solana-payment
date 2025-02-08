@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pay with Solana</title>
-    <script src="https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.js"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.98.0/lib/index.iife.min.js"></script>
 </head>
 <body>
     <h2>Pay with Solana</h2>
@@ -16,58 +13,7 @@
     <button id="payButton" disabled>Pay</button>
     <p id="status"></p>
 
-    <script>
-        let provider = window.solana;
-        let senderPublicKey = null;
-
-        document.getElementById('connectWallet').addEventListener('click', async () => {
-            if (!provider || !provider.isPhantom) {
-                alert("Phantom wallet not detected. Please install it.");
-                return;
-            }
-            try {
-                const response = await provider.connect();
-                senderPublicKey = response.publicKey.toString();
-                document.getElementById('status').innerText = "Wallet connected: " + senderPublicKey;
-                document.getElementById('payButton').disabled = false;
-            } catch (error) {
-                console.error("Wallet connection failed", error);
-                document.getElementById('status').innerText = "Wallet connection failed.";
-            }
-        });
-
-        document.getElementById('payButton').addEventListener('click', async () => {
-            const recipient = document.getElementById('recipient').value.trim();
-            if (!recipient) {
-                alert("Please enter a recipient address.");
-                return;
-            }
-
-            try {
-                const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('devnet'));
-                const senderKey = new solanaWeb3.PublicKey(senderPublicKey);
-                const recipientKey = new solanaWeb3.PublicKey(recipient);
-                const transaction = new solanaWeb3.Transaction().add(
-                    solanaWeb3.SystemProgram.transfer({
-                        fromPubkey: senderKey,
-                        toPubkey: recipientKey,
-                        lamports: solanaWeb3.LAMPORTS_PER_SOL * 0.01, // Send 0.01 SOL
-                    })
-                );
-
-                transaction.feePayer = senderKey;
-                transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
-
-                const signedTransaction = await provider.signTransaction(transaction);
-                const signature = await connection.sendRawTransaction(signedTransaction.serialize());
-
-                document.getElementById('status').innerText = "Transaction sent! Signature: " + signature;
-                console.log("Transaction Signature:", signature);
-            } catch (error) {
-                console.error("Transaction failed", error);
-                document.getElementById('status').innerText = "Transaction failed.";
-            }
-        });
-    </script>
+    <!-- Include the bundled JavaScript file -->
+    <script src="/dist/bundle.js"></script>
 </body>
 </html>
