@@ -4,7 +4,7 @@
     "description": "A simple app to send SOL from one wallet to another",
     "main": "index.js",
     "scripts": {
-      "start": "live-server"
+      "start": "live-server --port=8081"
     },
     "keywords": [
       "solana",
