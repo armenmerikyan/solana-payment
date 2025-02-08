@@ -1,0 +1,4 @@
+"scripts": {
+  "start": "node src/app.js",
+  "build": "webpack --mode production"
+}
