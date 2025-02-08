@@ -14,7 +14,8 @@ module.exports = {
       "url": require.resolve("url"),
       "stream": require.resolve("stream-browserify"),
       "querystring": require.resolve("querystring-es3"),
-      "string_decoder": require.resolve("string_decoder")
+      "string_decoder": require.resolve("string_decoder"),
+      "net": false,  // Disable the `net` module (you may need to install this if you're using it)
     },
   },
   module: {
