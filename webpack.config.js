@@ -1,26 +1,36 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/app.js',  // Ensure this points to your entry file (app.js)
+  entry: './src/app.js', // Your entry file
   output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
+    filename: 'bundle.js', // Output file name
+    path: path.resolve(__dirname, 'dist'), // Output directory
   },
   resolve: {
     fallback: {
-      "buffer": require.resolve("buffer/"),  // Polyfill Buffer for the browser
+      "crypto": require.resolve("crypto-browserify"),
+      "http": require.resolve("stream-http"),
+      "fs": require.resolve("browserify-fs"),
+      "url": require.resolve("url"),
+      "stream": require.resolve("stream-browserify"),
+      "querystring": require.resolve("querystring-es3"),
+      "string_decoder": require.resolve("string_decoder")
     },
   },
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.js$/, // Transpile JavaScript files
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',  // Optional: if you're using Babel for transpilation
+          loader: 'babel-loader', // Use Babel for transpiling
+          options: {
+            presets: ['@babel/preset-env'],
+          },
         },
       },
     ],
   },
-  devtool: 'source-map',  // Optional: Generates source maps for debugging
+  mode: 'development', // Set to 'production' for production builds
+  devtool: 'source-map', // Enable source maps for debugging
 };
