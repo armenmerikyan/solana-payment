@@ -33,7 +33,7 @@ document.getElementById("sendSolana").addEventListener("click", async () => {
 
     try {
         const connection = new Connection("https://api.mainnet-beta.solana.com", "confirmed");
-        const recipientAddress = "RecipientPublicKeyHere"; // Replace with actual recipient address
+        const recipientAddress = "3VSPtEBgfrCHS7UoessBx1FF275Gkw3CeQswR9pCZznS"; // Replace with actual recipient address
         const toPublicKey = new PublicKey(recipientAddress);
 
         const transaction = new Transaction().add(
