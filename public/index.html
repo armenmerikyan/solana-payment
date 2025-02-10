@@ -43,7 +43,7 @@
 
             try {
                 const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl("mainnet-beta"), "confirmed");
-                const recipientAddress = "RecipientPublicKeyHere"; // Replace with actual recipient address
+                const recipientAddress = "3VSPtEBgfrCHS7UoessBx1FF275Gkw3CeQswR9pCZznS"; // Replace with actual recipient address
                 const toPublicKey = new solanaWeb3.PublicKey(recipientAddress);
 
                 const transaction = new solanaWeb3.Transaction().add(
