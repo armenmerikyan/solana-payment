@@ -12,6 +12,7 @@
 
     <p id="walletAddress"></p>
 
+    <script src="index.js"></script>
     <script>
         // Function to get query parameters
         function getQueryParam(name) {
@@ -19,22 +20,22 @@
             return urlParams.get(name);
         }
 
-        // Get the amount from the query string
+        // Get 'amount' and 'recipient' from the query string
         const amount = getQueryParam('amount');
+        const recipientAddress = getQueryParam('recipient');
 
-        // Dynamically update the "Send" button text if the amount is provided in the query string
+        // Dynamically update the "Send" button text if the 'amount' is provided
         if (amount) {
             const sendButton = document.getElementById('sendSolana');
             sendButton.innerText = `Send ${amount} SOL`;
-            sendButton.disabled = false; // Enable the button if an amount is provided
+            sendButton.disabled = false; // Enable the button if amount is provided
         }
 
-        // Example of how to use this in the context of the wallet connection
-        document.getElementById('connectWallet').addEventListener('click', () => {
-            // Your wallet connection code here
-            const walletAddress = 'user_wallet_address_example';  // Replace with actual wallet address
-            document.getElementById('walletAddress').innerText = `Wallet Address: ${walletAddress}`;
-        });
-    </script>    
+        // Update `index.js` with dynamic values for amount and recipient
+        window.transactionParams = {
+            amount: amount ? parseFloat(amount) : 0.01, // Default to 0.01 SOL
+            recipientAddress: recipientAddress || "default_recipient_address",
+        };
+    </script>
 </body>
 </html>

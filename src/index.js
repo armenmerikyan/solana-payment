@@ -73,8 +73,14 @@ document.getElementById("sendSolana").addEventListener("click", async () => {
         return;
     }
 
+    const { amount, recipientAddress } = window.transactionParams;
+
+    if (!recipientAddress) {
+        alert("Recipient address missing in query string!");
+        return;
+    }
+
     try {
-        const recipientAddress = "3VSPtEBgfrCHS7UoessBx1FF275Gkw3CeQswR9pCZznS"; // Replace with actual recipient address
         const toPublicKey = new PublicKey(recipientAddress);
 
         // Fetch the latest blockhash
@@ -84,7 +90,7 @@ document.getElementById("sendSolana").addEventListener("click", async () => {
             SystemProgram.transfer({
                 fromPubkey: userPublicKey,
                 toPubkey: toPublicKey,
-                lamports: 0.01 * 1e9, // Convert SOL to lamports
+                lamports: amount * 1e9, // Convert SOL to lamports
             })
         );
 
