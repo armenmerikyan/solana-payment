@@ -34,5 +34,8 @@ module.exports = {
         open: true,
         hot: false, // Disable Webpack hot reloading (fix WebSocket issue)
         liveReload: false, // Disable live reload (fix WebSocket issue)
+        client: {
+            webSocketURL: null, // Explicitly disable WebSocket connection
+        },        
     },    
 };
