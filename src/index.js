@@ -57,7 +57,7 @@ document.getElementById("sendSolana").addEventListener("click", async () => {
         const signature = await connection.sendRawTransaction(signedTransaction.serialize());
 
         console.log("Transaction Signature:", signature);
-        alert(`Transaction Sent! Check Explorer:\nhttps://explorer.solana.com/tx/${signature}`);
+        alert(`Transaction Sent! Check Explorer:\nhttps://solscan.io/tx/${signature}`);
     } catch (err) {
         console.error("Transaction failed:", err);
         alert("Transaction failed! Check console.");
