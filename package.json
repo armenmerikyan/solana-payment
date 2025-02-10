@@ -1,26 +1,18 @@
 {
-    "name": "solana-send-app",
-    "version": "1.0.0",
-    "description": "A simple app to send SOL from one wallet to another",
-    "main": "index.js",
-    "scripts": {
-      "start": "live-server --port=8081"
-    },
-    "keywords": [
-      "solana",
-      "web3",
-      "crypto",
-      "send",
-      "wallet"
-    ],
-    "author": "",
-    "license": "ISC",
-    "dependencies": {
-      "@solana/web3.js": "^1.45.0"
-    },
-    "devDependencies": {},
-    "engines": {
-      "node": ">=14.0.0"
-    }
+  "name": "solana-transfer",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@solana/web3.js": "^1.98.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
   }
-  
+}

@@ -1,17 +1,30 @@
-const express = require('express');
-const path = require('path');
+const express = require("express");
+const cors = require("cors");
+const { Connection, PublicKey, Transaction, SystemProgram } = require("@solana/web3.js");
+require("dotenv").config();
+
 const app = express();
-const port = 8081;
+const PORT = process.env.PORT || 3000;
 
-// Serve static files from the 'dist' or 'public' folder
-app.use('/dist', express.static(path.join(__dirname, 'dist')));
+app.use(cors());
+app.use(express.json());
 
-// Serve the pay_with_sol.html page
-app.get('/pay_with_sol', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'pay_with_sol.html'));
+// Health Check
+app.get("/", (req, res) => {
+    res.send("Solana Phantom Wallet Backend Running!");
 });
 
-// Start the server
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+// Generate latest blockhash (optional utility)
+app.get("/blockhash", async (req, res) => {
+    try {
+        const connection = new Connection("https://api.mainnet-beta.solana.com", "confirmed");
+        const blockhash = await connection.getLatestBlockhash();
+        res.json({ blockhash: blockhash.blockhash });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to get blockhash" });
+    }
+});
+
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
 });
