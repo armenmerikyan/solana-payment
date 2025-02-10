@@ -32,7 +32,10 @@ document.getElementById("sendSolana").addEventListener("click", async () => {
     }
 
     try {
-        const connection = new Connection("https://api.mainnet-beta.solana.com", "confirmed");
+        const rpcUrl = 'https://solana-mainnet.g.alchemy.com/v2/brUu7bUWYqnL02KEqM_k1GWoLgTtkGvg'; // Replace with your QuickNode URL
+        console.log('RPC URL:', rpcUrl);
+        const connection = new solanaWeb3.Connection(rpcUrl);
+
         const recipientAddress = "3VSPtEBgfrCHS7UoessBx1FF275Gkw3CeQswR9pCZznS"; // Replace with actual recipient address
         const toPublicKey = new PublicKey(recipientAddress);
 
