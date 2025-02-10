@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const { Connection, PublicKey, Transaction, SystemProgram } = require("@solana/web3.js");
+const { Connection } = require("@solana/web3.js");
 const path = require("path");
 require("dotenv").config();
 
@@ -26,38 +26,6 @@ app.get("/blockhash", async (req, res) => {
         res.json({ blockhash: blockhash.blockhash });
     } catch (error) {
         res.status(500).json({ error: "Failed to get blockhash" });
-    }
-});
-
-app.post("/sendSol", async (req, res) => {
-    const { fromPublicKey, toPublicKey, amount } = req.body;
-
-    try {
-        const connection = new Connection("https://api.mainnet-beta.solana.com", "confirmed");
-
-        // Create the transaction
-        const transaction = new Transaction().add(
-            SystemProgram.transfer({
-                fromPubkey: new PublicKey(fromPublicKey),
-                toPubkey: new PublicKey(toPublicKey),
-                lamports: amount * 1e9, // Convert SOL to lamports
-            })
-        );
-
-        transaction.feePayer = new PublicKey(fromPublicKey);
-        const blockhash = await connection.getLatestBlockhash();
-        transaction.recentBlockhash = blockhash.blockhash;
-
-        // Sign the transaction
-        const signedTransaction = await window.solana.signTransaction(transaction);
-
-        // Send transaction
-        const signature = await connection.sendRawTransaction(signedTransaction.serialize());
-
-        res.json({ success: true, signature });
-    } catch (error) {
-        console.error("Transaction failed:", error);
-        res.status(500).json({ error: "Transaction failed" });
     }
 });
 
