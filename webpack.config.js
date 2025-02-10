@@ -33,7 +33,6 @@ module.exports = {
         port: 8080,
         open: true,
         hot: false, // Disable Webpack hot reloading (fix WebSocket issue)
-        liveReload: false, // Disable live reload (fix WebSocket issue)
-        sockPort: 0, // Disable the WebSocket connection
+        liveReload: false, // Disable live reload (fix WebSocket issue) 
     },    
 };
