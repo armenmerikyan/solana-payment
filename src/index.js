@@ -9,7 +9,6 @@ let userPublicKey = null;
 // List of RPC endpoints to rotate between
 const rpcUrls = [
     'https://solana-mainnet.g.alchemy.com/v2/QpeMFqGkp289n76vAFR860xjPstkfy5C', // Alchemy 
-    'https://solana-api.projectserum.com', // Project Serum
 ];
 
 let currentRpcIndex = 0;
