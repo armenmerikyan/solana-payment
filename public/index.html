@@ -4,23 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solana Payment</title>
-    <script type="module">
-        import { Connection, PublicKey, Transaction, SystemProgram } from "https://cdn.jsdelivr.net/npm/@solana/web3.js@latest";
-    </script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.min.js"></script>
-    <script>
-        window.Buffer = window.Buffer || buffer.Buffer;
-    </script>
-    
 </head>
 <body>
     <button onclick="connectWallet()">Connect Wallet</button>
     <button onclick="sendSol()">Send 0.01 SOL</button>
 
-    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
-    <script>
-        const { Connection, PublicKey, Transaction, SystemProgram } = solanaWeb3;
+    <!-- Include Buffer Polyfill -->
+    <script src="https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.min.js"></script>
+
+    <!-- Solana Web3.js -->
+    <script type="module">
+        import { Connection, PublicKey, Transaction, SystemProgram } from "https://cdn.jsdelivr.net/npm/@solana/web3.js@1.98.0";
+
         let userPublicKey = null;
 
         // 🟢 1. Connect to Phantom Wallet
@@ -37,7 +32,9 @@
             } else {
                 alert("Phantom Wallet not found. Please install it.");
             }
-        }; 
+        };
+
+        // 🟢 2. Send SOL Transaction
         const sendSol = async () => {
             if (!userPublicKey) {
                 alert("Connect your Phantom Wallet first!");
@@ -45,33 +42,34 @@
             }
 
             try {
-                const recipientAddress = "RecipientPublicKeyHere"; // Replace with the actual recipient address
-                const amount = 0.01; // 0.01 SOL
+                const connection = new Connection("https://api.mainnet-beta.solana.com", "confirmed");
+                const recipientAddress = "RecipientPublicKeyHere"; // Replace with actual recipient address
+                const toPublicKey = new PublicKey(recipientAddress);
 
-                const response = await fetch("/sendSol", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        fromPublicKey: userPublicKey.toString(),
-                        toPublicKey: recipientAddress,
-                        amount: amount,
-                    }),
-                });
+                const transaction = new Transaction().add(
+                    SystemProgram.transfer({
+                        fromPubkey: userPublicKey,
+                        toPubkey: toPublicKey,
+                        lamports: 0.01 * 1e9, // Convert SOL to lamports
+                    })
+                );
 
-                const result = await response.json();
-                if (result.success) {
-                    alert(`Transaction Sent! Check Explorer:\nhttps://explorer.solana.com/tx/${result.signature}`);
-                } else {
-                    alert("Transaction failed.");
-                }
+                transaction.feePayer = userPublicKey;
+                transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+
+                // 🔹 Open Phantom Wallet for user to sign
+                const signedTransaction = await window.solana.signTransaction(transaction);
+
+                // 🔹 Send the signed transaction to Solana blockchain
+                const signature = await connection.sendRawTransaction(signedTransaction.serialize());
+
+                console.log("Transaction Signature:", signature);
+                alert(`Transaction Sent! Check Explorer:\nhttps://explorer.solana.com/tx/${signature}`);
             } catch (err) {
                 console.error("Transaction failed:", err);
                 alert("Transaction failed! Check console.");
             }
         };
-
     </script>
 </body>
 </html>
