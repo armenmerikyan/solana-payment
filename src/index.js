@@ -31,8 +31,8 @@ document.getElementById("sendSolana").addEventListener("click", async () => {
         return;
     }
 
-    try {
-        const rpcUrl = 'https://solana-mainnet.g.alchemy.com/v2/brUu7bUWYqnL02KEqM_k1GWoLgTtkGvg'; // Replace with your QuickNode URL
+    try { 
+        const rpcUrl = 'https://solana-mainnet.g.alchemy.com/v2/QpeMFqGkp289n76vAFR860xjPstkfy5C'; // Replace with your QuickNode URL
         console.log('RPC URL:', rpcUrl);
         const connection = new Connection(rpcUrl);
                 
