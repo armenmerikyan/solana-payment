@@ -18,4 +18,15 @@ module.exports = {
         },
     },
     mode: "development", // Set to "production" for optimized builds
+    devServer: {
+        static: {
+            directory: path.join(__dirname, "dist"), // Serve files from the "dist" folder
+        },
+        allowedHosts: [
+            "gigahard.ai", // Allow requests from this host
+            "localhost",   // Allow requests from localhost
+        ],
+        port: 8080, // Port to run the dev server
+        open: true, // Open the browser automatically
+    },
 };
