@@ -12,6 +12,7 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             template: "./src/index.html",
+            publicPath: "/solana_paymen/", // 👈 Set the base path for assets
         }),
     ],
     resolve: {
@@ -23,6 +24,10 @@ module.exports = {
     devServer: {
         static: {
             directory: path.join(__dirname, "dist"),
+            publicPath: "/solana_paymen/", // 👈 Serve from subdirectory
+        },
+        historyApiFallback: {
+            index: "/solana_paymen/index.html", // 👈 Ensure SPA routing works
         },
         allowedHosts: ["gigahard.ai", "localhost"],
         port: 8080,
