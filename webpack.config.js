@@ -24,15 +24,15 @@ module.exports = {
     devServer: {
         static: {
             directory: path.join(__dirname, "dist"),
-            publicPath: "/solana_payment/", // 👈 Serve from subdirectory
+            publicPath: "/solana_payment/", // Serve from subdirectory
         },
         historyApiFallback: {
-            index: "/solana_payment/index.html", // 👈 Ensure SPA routing works
+            index: "/solana_payment/index.html", // Ensure SPA routing works
         },
-        allowedHosts: ["gigahard.ai", "localhost"],
+        allowedHosts: "all", // Allow any host
         port: 8080,
         open: true,
-        hot: false, // ❌ Disable Webpack hot reloading (fix WebSocket issue)
-        liveReload: false, // ❌ Disable live reload (fix WebSocket issue)
-    },
+        hot: false, // Disable Webpack hot reloading (fix WebSocket issue)
+        liveReload: false, // Disable live reload (fix WebSocket issue)
+    },    
 };
