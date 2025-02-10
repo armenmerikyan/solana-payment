@@ -33,9 +33,7 @@
             } else {
                 alert("Phantom Wallet not found. Please install it.");
             }
-        };
-
-        // 🟢 2. Send SOL Transaction
+        }; 
         const sendSol = async () => {
             if (!userPublicKey) {
                 alert("Connect your Phantom Wallet first!");
@@ -43,34 +41,33 @@
             }
 
             try {
-                const connection = new Connection("https://api.mainnet-beta.solana.com", "confirmed");
-                const recipientAddress = "3VSPtEBgfrCHS7UoessBx1FF275Gkw3CeQswR9pCZznS"; // Replace with the actual recipient address
-                const toPublicKey = new PublicKey(recipientAddress);
+                const recipientAddress = "RecipientPublicKeyHere"; // Replace with the actual recipient address
+                const amount = 0.01; // 0.01 SOL
 
-                const transaction = new Transaction().add(
-                    SystemProgram.transfer({
-                        fromPubkey: userPublicKey,
-                        toPubkey: toPublicKey,
-                        lamports: 0.01 * 1e9, // Convert SOL to lamports
-                    })
-                );
+                const response = await fetch("/sendSol", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        fromPublicKey: userPublicKey.toString(),
+                        toPublicKey: recipientAddress,
+                        amount: amount,
+                    }),
+                });
 
-                transaction.feePayer = userPublicKey;
-                transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
-
-                // 🔹 Open Phantom Wallet for user to sign
-                const signedTransaction = await window.solana.signTransaction(transaction);
-
-                // 🔹 Send the signed transaction to Solana blockchain
-                const signature = await connection.sendRawTransaction(signedTransaction.serialize());
-
-                console.log("Transaction Signature:", signature);
-                alert(`Transaction Sent! Check Explorer:\nhttps://explorer.solana.com/tx/${signature}`);
+                const result = await response.json();
+                if (result.success) {
+                    alert(`Transaction Sent! Check Explorer:\nhttps://explorer.solana.com/tx/${result.signature}`);
+                } else {
+                    alert("Transaction failed.");
+                }
             } catch (err) {
                 console.error("Transaction failed:", err);
                 alert("Transaction failed! Check console.");
             }
         };
+
     </script>
 </body>
 </html>
