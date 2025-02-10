@@ -2,31 +2,31 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-    entry: "./src/index.js", // Entry point for your application
+    entry: "./src/index.js",
     output: {
-        filename: "bundle.js", // Output bundle file
-        path: path.resolve(__dirname, "dist"), // Output directory
+        filename: "bundle.js",
+        path: path.resolve(__dirname, "dist"),
+        clean: true, // Ensure old files are removed
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: "./src/index.html", // Use your HTML file as a template
+            template: "./src/index.html",
         }),
     ],
     resolve: {
         fallback: {
-            buffer: require.resolve("buffer/"), // Polyfill for Buffer
+            buffer: require.resolve("buffer/"),
         },
     },
-    mode: "development", // Set to "production" for optimized builds
+    mode: process.env.NODE_ENV === "production" ? "production" : "development",
     devServer: {
         static: {
-            directory: path.join(__dirname, "dist"), // Serve files from the "dist" folder
+            directory: path.join(__dirname, "dist"),
         },
-        allowedHosts: [
-            "gigahard.ai", // Allow requests from this host
-            "localhost",   // Allow requests from localhost
-        ],
-        port: 8080, // Port to run the dev server
-        open: true, // Open the browser automatically
+        allowedHosts: ["gigahard.ai", "localhost"],
+        port: 8080,
+        open: true,
+        hot: false, // ❌ Disable Webpack hot reloading (fix WebSocket issue)
+        liveReload: false, // ❌ Disable live reload (fix WebSocket issue)
     },
 };
