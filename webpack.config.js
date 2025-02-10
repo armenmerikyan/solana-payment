@@ -6,6 +6,7 @@ module.exports = {
     output: {
         filename: "bundle.js",
         path: path.resolve(__dirname, "dist"),
+        publicPath: "/solana_paymen/", // 👈 Set the base path for assets
         clean: true, // Ensure old files are removed
     },
     plugins: [
