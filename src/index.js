@@ -8,43 +8,40 @@ let userPublicKey = null;
 
 // List of RPC endpoints to rotate between
 const rpcUrls = [
-    'https://solana-mainnet.g.alchemy.com/v2/QpeMFqGkp289n76vAFR860xjPstkfy5C', // Alchemy
-    'https://api.mainnet-beta.solana.com', // Solana Mainnet
-    'https://solana-api.projectserum.com', // Project Serum
+    'https://solana-mainnet.g.alchemy.com/v2/QpeMFqGkp289n76vAFR860xjPstkfy5C',
+    'https://api.mainnet-beta.solana.com',
+    'https://solana-api.projectserum.com',
 ];
 
 let currentRpcIndex = 0;
-
-// Create a single connection object
-const connection = new Connection(rpcUrls[currentRpcIndex], "confirmed");
+let connection = new Connection(rpcUrls[currentRpcIndex], "confirmed");
 
 // Function to delay execution
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Cache the blockhash
-let cachedBlockhash = null;
-
-const getCachedBlockhash = async () => {
-    if (!cachedBlockhash) {
-        cachedBlockhash = (await connection.getLatestBlockhash()).blockhash;
-    }
-    return cachedBlockhash;
+// Fetch the latest blockhash
+const getLatestBlockhash = async () => {
+    const { blockhash } = await connection.getLatestBlockhash();
+    return blockhash;
 };
 
-// Retry mechanism with exponential backoff
+// Retry mechanism with exponential backoff and RPC rotation
 const sendTransactionWithRetry = async (transaction, retries = 3) => {
     for (let i = 0; i < retries; i++) {
         try {
-            const signedTransaction = await window.solana.signTransaction(transaction);
-            const signature = await connection.sendRawTransaction(signedTransaction.serialize());
-            return signature;
+            const signedTransaction = await window.solana.signAndSendTransaction(transaction);
+            return signedTransaction.signature;
         } catch (err) {
             console.error(`Attempt ${i + 1} failed:`, err);
+
             if (err.message.includes("429") || err.message.includes("Too Many Requests")) {
                 console.warn(`Rate limit exceeded. Retrying (${i + 1}/${retries})...`);
-                await delay(1000 * (i + 1)); // Exponential backoff (1s, 2s, 3s, etc.)
+                await delay(1000 * (i + 1)); // Exponential backoff
             } else {
-                throw err; // Re-throw other errors
+                // Rotate RPC endpoint if necessary
+                currentRpcIndex = (currentRpcIndex + 1) % rpcUrls.length;
+                connection = new Connection(rpcUrls[currentRpcIndex], "confirmed");
+                console.warn(`Switching to RPC: ${rpcUrls[currentRpcIndex]}`);
             }
         }
     }
@@ -56,7 +53,7 @@ document.getElementById("connectWallet").addEventListener("click", async () => {
     if (window.solana && window.solana.isPhantom) {
         try {
             const response = await window.solana.connect();
-            userPublicKey = response.publicKey;
+            userPublicKey = new PublicKey(response.publicKey.toString());
             document.getElementById("walletAddress").innerText = `Connected Wallet: ${userPublicKey.toString()}`;
             document.getElementById("sendSolana").disabled = false;
             alert("Wallet Connected!");
@@ -80,8 +77,8 @@ document.getElementById("sendSolana").addEventListener("click", async () => {
         const recipientAddress = "3VSPtEBgfrCHS7UoessBx1FF275Gkw3CeQswR9pCZznS"; // Replace with actual recipient address
         const toPublicKey = new PublicKey(recipientAddress);
 
-        // Fetch the latest blockhash and cache it
-        const blockhash = await getCachedBlockhash();
+        // Fetch the latest blockhash
+        const blockhash = await getLatestBlockhash();
 
         const transaction = new Transaction().add(
             SystemProgram.transfer({
