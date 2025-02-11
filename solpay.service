@@ -1,0 +1,26 @@
+[Unit]
+Description=My NPM Application
+After=network.target
+
+[Service]
+# Set the working directory for the app
+WorkingDirectory=/root/solana-payment
+
+# Load nvm and use the LTS version of Node.js
+Environment=HOME=/root
+Environment=USER=root
+ExecStartPre=/bin/bash -c 'source /root/.nvm/nvm.sh && nvm install --lts && nvm use --lts'
+
+# Run the app with the LTS version of Node.js
+ExecStart=/bin/bash -c 'source /root/.nvm/nvm.sh && nvm use --lts && npm start'
+
+Restart=always
+User=root
+Group=root
+Environment=NODE_ENV=production
+# Optional: Redirect logs
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
