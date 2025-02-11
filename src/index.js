@@ -103,8 +103,8 @@ document.getElementById("sendSolana").addEventListener("click", async () => {
         console.log("Transaction Signature:", signature);
         alert(`Transaction Sent! Check Explorer:\nhttps://solscan.io/tx/${signature}`);
 
-        window.location.href = `pay-with-solana/?txn=${signature}`;
-        
+        window.location.href = `/pay-with-solana/?txn=${signature}`;
+
     } catch (err) {
         console.error("Transaction failed:", err);
         alert("Transaction failed! Check console.");
