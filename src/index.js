@@ -19,6 +19,7 @@ let connection = new Connection(rpcUrls[currentRpcIndex], "confirmed");
 // Function to delay execution
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+
 // Fetch the latest blockhash
 const getLatestBlockhash = async () => {
     const { blockhash } = await connection.getLatestBlockhash();
@@ -74,6 +75,11 @@ document.getElementById("sendSolana").addEventListener("click", async () => {
     }
 
     const { amount, recipientAddress } = window.transactionParams;
+
+    if (!amount || isNaN(amount)) {
+        alert("Invalid transaction amount!");
+        return;
+    }
 
     if (!recipientAddress) {
         alert("Recipient address missing in query string!");
