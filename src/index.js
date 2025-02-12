@@ -95,6 +95,7 @@ if (!document.getElementById("connectWallet").hasListener) {
         }
     });
 }
+let isProcessing = false;
 
 document.getElementById("sendSolana").addEventListener("click", async (event) => {
     if (isProcessing) return; // Prevent double-click
