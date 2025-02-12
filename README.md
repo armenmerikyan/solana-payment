@@ -37,23 +37,19 @@ yarn install
 npm install
 ```
 
-bash
-Copy
-yarn install
-# or
-npm install
-Set up your Solana environment:
+3. Set up your Solana environment:
 
-bash
-Copy
+```bash
 solana config set --url devnet
 solana airdrop 1  # Request SOL for testing (Devnet only)
-Usage
-Sending a Payment
-To send a payment, use the sendPayment function:
+```
 
-javascript
-Copy
+# Usage
+
+- Sending a Payment
+- To send a payment, use the sendPayment function:
+
+```bash
 import { sendPayment } from './src/payment';
 
 const senderPrivateKey = 'your-private-key';
@@ -67,48 +63,8 @@ sendPayment(senderPrivateKey, recipientAddress, amount)
   .catch((error) => {
     console.error('Payment failed:', error);
   });
-Receiving Payments
-To check for incoming payments, you can use the checkBalance function:
-
-javascript
-Copy
-import { checkBalance } from './src/payment';
-
-const walletAddress = 'your-wallet-address';
-
-checkBalance(walletAddress)
-  .then((balance) => {
-    console.log(`Current balance: ${balance} SOL`);
-  })
-  .catch((error) => {
-    console.error('Failed to check balance:', error);
-  });
-Configuration
-You can configure the project by editing the config.js file:
-
-javascript
-Copy
-export const SOLANA_NETWORK = 'devnet'; // Options: 'mainnet-beta', 'testnet', 'devnet'
-export const COMMITMENT = 'confirmed'; // Options: 'processed', 'confirmed', 'finalized'
-Contributing
-Contributions are welcome! If you'd like to contribute, please follow these steps:
-
-Fork the repository.
-
-Create a new branch (git checkout -b feature/YourFeatureName).
-
-Commit your changes (git commit -m 'Add some feature').
-
-Push to the branch (git push origin feature/YourFeatureName).
-
-Open a pull request.
-
-License
-This project is licensed under the MIT License. See the LICENSE file for details.
-
-Acknowledgments
-Solana Documentation
-
-Anchor Framework
-
-The Solana community for their support and resources.
+  
+```
+   
+ 
+This project is licensed under the MIT License. See the LICENSE file for details. 
