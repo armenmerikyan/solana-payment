@@ -22,10 +22,10 @@ Before you begin, ensure you have the following installed:
 
 1. Clone the repository:
 
-   ```bash
-   git clone https://github.com/armenmerikyan/solana-payment.git
-   cd solana-payment
-   ```
+```bash
+git clone https://github.com/armenmerikyan/solana-payment.git
+cd solana-payment
+```
 
 2. Install dependencies:
 
@@ -34,29 +34,6 @@ Before you begin, ensure you have the following installed:
 ```bash
 
 npm install
-
-```
-
-
-# Usage
-
-- Sending a Payment
-- To send a payment, use the sendPayment function:
-
-```bash
-import { sendPayment } from './src/payment';
-
-const senderPrivateKey = 'your-private-key';
-const recipientAddress = 'recipient-wallet-address';
-const amount = 0.1; // Amount in SOL
-
-sendPayment(senderPrivateKey, recipientAddress, amount)
-  .then((txId) => {
-    console.log(`Payment successful! Transaction ID: ${txId}`);
-  })
-  .catch((error) => {
-    console.error('Payment failed:', error);
-  });
 
 ```
 
