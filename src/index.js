@@ -73,8 +73,7 @@ let isWalletConnected = false;
 if (!document.getElementById("connectWallet").hasListener) {
     document.getElementById("connectWallet").addEventListener("click", async function connectWallet() {
         if (window.solana && window.solana.isPhantom) {
-            if (isWalletConnected) return;  // Skip if already connected
-
+            if (isWalletConnected) return;  // Skip if already connected 
             try {
                 const response = await window.solana.connect();
                 userPublicKey = new PublicKey(response.publicKey.toString());
@@ -97,9 +96,16 @@ if (!document.getElementById("connectWallet").hasListener) {
     });
 }
 
-document.getElementById("sendSolana").addEventListener("click", async () => {
+document.getElementById("sendSolana").addEventListener("click", async (event) => {
+    if (isProcessing) return; // Prevent double-click
+    isProcessing = true;
+
+    // Prevent form submission if it's inside a form
+    event.preventDefault(); // Only use this if it's inside a form
+
     if (!userPublicKey) {
         alert("Connect your Phantom Wallet first!");
+        isProcessing = false;
         return;
     }
 
@@ -107,7 +113,7 @@ document.getElementById("sendSolana").addEventListener("click", async () => {
         const toPublicKey = new PublicKey(recipientAddress);
         const blockhash = await getLatestBlockhash();
         let transaction = new Transaction();
-        
+
         if (splTokenMint) {
             const mintPublicKey = new PublicKey(splTokenMint);
             const senderTokenAccount = await getAssociatedTokenAddress(mintPublicKey, userPublicKey);
@@ -138,10 +144,12 @@ document.getElementById("sendSolana").addEventListener("click", async () => {
 
         console.log("Transaction Signature:", signature);
         alert(`Transaction Sent! Check Explorer:\nhttps://solscan.io/tx/${signature}`);
-
+        
         window.location.href = `/pay-with-solana/?txn=${signature}`;
     } catch (err) {
         console.error("Transaction failed:", err);
         alert("Transaction failed! Check console.");
+    } finally {
+        isProcessing = false;
     }
 });
