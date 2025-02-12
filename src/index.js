@@ -108,8 +108,9 @@ document.getElementById("sendSolana").addEventListener("click", async () => {
                 senderTokenAccount, 
                 recipientTokenAccount, 
                 userPublicKey, 
-                amount * 10 ** 6 // Assuming the SPL token has 6 decimals, adjust as needed
+                Math.round(amount * 10 ** 6) // Round the amount to the nearest integer
             );
+            
 
             transaction.add(transferInstruction);
         } else {
