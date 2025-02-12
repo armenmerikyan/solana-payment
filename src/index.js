@@ -26,20 +26,26 @@ const getLatestBlockhash = async () => {
     return blockhash;
 };
 
-// Retry mechanism with RPC rotation
+let isTransactionSent = false;
+
 const sendTransactionWithRetry = async (transaction, retries = 3) => {
+    if (isTransactionSent) {
+        console.log("Transaction already sent. Skipping retry.");
+        return; // Exit if the transaction has already been sent
+    }
+    
     for (let i = 0; i < retries; i++) {
         try {
             const signedTransaction = await window.solana.signAndSendTransaction(transaction);
+            isTransactionSent = true;  // Set the flag to avoid resending
             return signedTransaction.signature;
         } catch (err) {
             console.error(`Attempt ${i + 1} failed:`, err);
 
             if (err.message.includes("429") || err.message.includes("Too Many Requests")) {
                 console.warn(`Rate limit exceeded. Retrying (${i + 1}/${retries})...`);
-                await delay(1000 * (i + 1));
+                await delay(1000 * (i + 1)); // Implement backoff on retries
             } else {
-                // Rotate RPC endpoint if necessary
                 currentRpcIndex = (currentRpcIndex + 1) % rpcUrls.length;
                 connection = new Connection(rpcUrls[currentRpcIndex], "confirmed");
                 console.warn(`Switching to RPC: ${rpcUrls[currentRpcIndex]}`);
@@ -80,7 +86,6 @@ document.getElementById("connectWallet").addEventListener("click", async () => {
     }
 });
 
-// Send SOL or SPL Token
 document.getElementById("sendSolana").addEventListener("click", async () => {
     if (!userPublicKey) {
         alert("Connect your Phantom Wallet first!");
@@ -93,35 +98,23 @@ document.getElementById("sendSolana").addEventListener("click", async () => {
         let transaction = new Transaction();
         
         if (splTokenMint) {
-            // If SPL Token is provided, send SPL Token instead of SOL
-            console.log(`Sending SPL Token: ${splTokenMint}`);
-
             const mintPublicKey = new PublicKey(splTokenMint);
             const senderTokenAccount = await getAssociatedTokenAddress(mintPublicKey, userPublicKey);
             const recipientTokenAccount = await getAssociatedTokenAddress(mintPublicKey, toPublicKey);
 
-            console.log(`Sender Token Account: ${senderTokenAccount.toString()}`);
-            console.log(`Recipient Token Account: ${recipientTokenAccount.toString()}`);
-
-            // Create SPL Token transfer instruction
             const transferInstruction = createTransferInstruction(
                 senderTokenAccount, 
                 recipientTokenAccount, 
                 userPublicKey, 
-                Math.round(amount * 10 ** 6) // Round the amount to the nearest integer
+                Math.round(amount * 10 ** 6)
             );
-            
-
             transaction.add(transferInstruction);
         } else {
-            // Default: Send SOL transaction
-            console.log("Sending SOL");
-
             transaction.add(
                 SystemProgram.transfer({
                     fromPubkey: userPublicKey,
                     toPubkey: toPublicKey,
-                    lamports: amount * 1e9, // Convert SOL to lamports
+                    lamports: amount * 1e9,
                 })
             );
         }
