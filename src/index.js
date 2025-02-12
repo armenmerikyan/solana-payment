@@ -68,15 +68,18 @@ const splTokenMint = getQueryParam("splToken"); // SPL Token mint address
 
 window.transactionParams = { amount, recipientAddress, splTokenMint };
 
+let isWalletConnected = false;
 // Connect to Phantom Wallet
 document.getElementById("connectWallet").addEventListener("click", async () => {
     if (window.solana && window.solana.isPhantom) {
+        if (isWalletConnected) return;  // Skip if already connected
         try {
             const response = await window.solana.connect();
             userPublicKey = new PublicKey(response.publicKey.toString());
             document.getElementById("walletAddress").innerText = `Connected Wallet: ${userPublicKey.toString()}`;
             document.getElementById("sendSolana").disabled = false;
             alert("Wallet Connected!");
+            isWalletConnected = true;
         } catch (err) {
             console.error("Wallet connection failed:", err);
             alert("Wallet connection failed!");
