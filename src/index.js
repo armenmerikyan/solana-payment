@@ -70,24 +70,32 @@ window.transactionParams = { amount, recipientAddress, splTokenMint };
 
 let isWalletConnected = false;
 // Connect to Phantom Wallet
-document.getElementById("connectWallet").addEventListener("click", async () => {
-    if (window.solana && window.solana.isPhantom) {
-        if (isWalletConnected) return;  // Skip if already connected
-        try {
-            const response = await window.solana.connect();
-            userPublicKey = new PublicKey(response.publicKey.toString());
-            document.getElementById("walletAddress").innerText = `Connected Wallet: ${userPublicKey.toString()}`;
-            document.getElementById("sendSolana").disabled = false;
-            alert("Wallet Connected!");
-            isWalletConnected = true;
-        } catch (err) {
-            console.error("Wallet connection failed:", err);
-            alert("Wallet connection failed!");
+if (!document.getElementById("connectWallet").hasListener) {
+    document.getElementById("connectWallet").addEventListener("click", async function connectWallet() {
+        if (window.solana && window.solana.isPhantom) {
+            if (isWalletConnected) return;  // Skip if already connected
+
+            try {
+                const response = await window.solana.connect();
+                userPublicKey = new PublicKey(response.publicKey.toString());
+
+                // Update the UI once connected
+                document.getElementById("walletAddress").innerText = `Connected Wallet: ${userPublicKey.toString()}`;
+                document.getElementById("sendSolana").disabled = false;
+                alert("Wallet Connected!");
+                isWalletConnected = true;  // Set the flag to true
+
+                // Mark that the listener was added to prevent future additions
+                document.getElementById("connectWallet").hasListener = true;
+            } catch (err) {
+                console.error("Wallet connection failed:", err);
+                alert("Wallet connection failed!");
+            }
+        } else {
+            alert("Phantom Wallet not found. Please install it.");
         }
-    } else {
-        alert("Phantom Wallet not found. Please install it.");
-    }
-});
+    });
+}
 
 document.getElementById("sendSolana").addEventListener("click", async () => {
     if (!userPublicKey) {
