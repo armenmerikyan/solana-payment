@@ -1,4 +1,5 @@
 import { Connection, PublicKey, Transaction, SystemProgram } from "@solana/web3.js";
+import { getAssociatedTokenAddress, createTransferInstruction } from "@solana/spl-token";
 import { Buffer } from "buffer";
 
 // Initialize Buffer globally
@@ -19,14 +20,13 @@ let connection = new Connection(rpcUrls[currentRpcIndex], "confirmed");
 // Function to delay execution
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-
 // Fetch the latest blockhash
 const getLatestBlockhash = async () => {
     const { blockhash } = await connection.getLatestBlockhash();
     return blockhash;
 };
 
-// Retry mechanism with exponential backoff and RPC rotation
+// Retry mechanism with RPC rotation
 const sendTransactionWithRetry = async (transaction, retries = 3) => {
     for (let i = 0; i < retries; i++) {
         try {
@@ -37,7 +37,7 @@ const sendTransactionWithRetry = async (transaction, retries = 3) => {
 
             if (err.message.includes("429") || err.message.includes("Too Many Requests")) {
                 console.warn(`Rate limit exceeded. Retrying (${i + 1}/${retries})...`);
-                await delay(1000 * (i + 1)); // Exponential backoff
+                await delay(1000 * (i + 1));
             } else {
                 // Rotate RPC endpoint if necessary
                 currentRpcIndex = (currentRpcIndex + 1) % rpcUrls.length;
@@ -48,6 +48,19 @@ const sendTransactionWithRetry = async (transaction, retries = 3) => {
     }
     throw new Error("Failed after retries");
 };
+
+// Function to get query parameters
+const getQueryParam = (name) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(name);
+};
+
+// Get transaction details from query string
+const amount = getQueryParam("amount") ? parseFloat(getQueryParam("amount")) : 0.01;
+const recipientAddress = getQueryParam("recipient") || "default_recipient_address";
+const splTokenMint = getQueryParam("splToken"); // SPL Token mint address
+
+window.transactionParams = { amount, recipientAddress, splTokenMint };
 
 // Connect to Phantom Wallet
 document.getElementById("connectWallet").addEventListener("click", async () => {
@@ -67,38 +80,50 @@ document.getElementById("connectWallet").addEventListener("click", async () => {
     }
 });
 
-// Send SOL Transaction
+// Send SOL or SPL Token
 document.getElementById("sendSolana").addEventListener("click", async () => {
     if (!userPublicKey) {
         alert("Connect your Phantom Wallet first!");
         return;
     }
 
-    const { amount, recipientAddress } = window.transactionParams;
-
-    if (!amount || isNaN(amount)) {
-        alert("Invalid transaction amount!");
-        return;
-    }
-
-    if (!recipientAddress) {
-        alert("Recipient address missing in query string!");
-        return;
-    }
-
     try {
         const toPublicKey = new PublicKey(recipientAddress);
-
-        // Fetch the latest blockhash
         const blockhash = await getLatestBlockhash();
+        let transaction = new Transaction();
+        
+        if (splTokenMint) {
+            // If SPL Token is provided, send SPL Token instead of SOL
+            console.log(`Sending SPL Token: ${splTokenMint}`);
 
-        const transaction = new Transaction().add(
-            SystemProgram.transfer({
-                fromPubkey: userPublicKey,
-                toPubkey: toPublicKey,
-                lamports: amount * 1e9, // Convert SOL to lamports
-            })
-        );
+            const mintPublicKey = new PublicKey(splTokenMint);
+            const senderTokenAccount = await getAssociatedTokenAddress(mintPublicKey, userPublicKey);
+            const recipientTokenAccount = await getAssociatedTokenAddress(mintPublicKey, toPublicKey);
+
+            console.log(`Sender Token Account: ${senderTokenAccount.toString()}`);
+            console.log(`Recipient Token Account: ${recipientTokenAccount.toString()}`);
+
+            // Create SPL Token transfer instruction
+            const transferInstruction = createTransferInstruction(
+                senderTokenAccount, 
+                recipientTokenAccount, 
+                userPublicKey, 
+                amount * 10 ** 6 // Assuming the SPL token has 6 decimals, adjust as needed
+            );
+
+            transaction.add(transferInstruction);
+        } else {
+            // Default: Send SOL transaction
+            console.log("Sending SOL");
+
+            transaction.add(
+                SystemProgram.transfer({
+                    fromPubkey: userPublicKey,
+                    toPubkey: toPublicKey,
+                    lamports: amount * 1e9, // Convert SOL to lamports
+                })
+            );
+        }
 
         transaction.feePayer = userPublicKey;
         transaction.recentBlockhash = blockhash;
@@ -110,7 +135,6 @@ document.getElementById("sendSolana").addEventListener("click", async () => {
         alert(`Transaction Sent! Check Explorer:\nhttps://solscan.io/tx/${signature}`);
 
         window.location.href = `/pay-with-solana/?txn=${signature}`;
-
     } catch (err) {
         console.error("Transaction failed:", err);
         alert("Transaction failed! Check console.");
