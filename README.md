@@ -32,17 +32,11 @@ Before you begin, ensure you have the following installed:
 ## Install dependencies:
 
 ```bash
-yarn install
-# or
+
 npm install
+
 ```
 
-3. Set up your Solana environment:
-
-```bash
-solana config set --url devnet
-solana airdrop 1  # Request SOL for testing (Devnet only)
-```
 
 # Usage
 
@@ -68,7 +62,7 @@ sendPayment(senderPrivateKey, recipientAddress, amount)
 
 ##  Build and Run the Project
    
-``` 
+```bash 
 
 npm run build
 
