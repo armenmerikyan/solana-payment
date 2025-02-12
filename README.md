@@ -63,8 +63,17 @@ sendPayment(senderPrivateKey, recipientAddress, amount)
   .catch((error) => {
     console.error('Payment failed:', error);
   });
-  
+
 ```
+
+##  Build and Run the Project
    
- 
+``` 
+
+npm run build
+
+npm run start
+
+```
+
 This project is licensed under the MIT License. See the LICENSE file for details. 
