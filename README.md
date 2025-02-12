@@ -25,8 +25,17 @@ Before you begin, ensure you have the following installed:
    ```bash
    git clone https://github.com/armenmerikyan/solana-payment.git
    cd solana-payment
+   ```
 
 2. Install dependencies:
+
+## Install dependencies:
+
+```bash
+yarn install
+# or
+npm install
+```
 
 bash
 Copy
