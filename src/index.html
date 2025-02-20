@@ -6,9 +6,9 @@
     <title>Solana Payment</title>
 </head>
 <body>
-    <h1>Send Solana with Phantom Wallet</h1>
+    <h1>Send Payment with Phantom Wallet</h1>
     <button id="connectWallet">Connect Wallet</button>
-    <button id="sendSolana" disabled>Send 0.01 SOL</button>
+    <button id="sendSolana" disabled>Send 0.01</button>
 
     <p id="walletAddress"></p>
 
@@ -26,7 +26,7 @@
         // Dynamically update the "Send" button text if the 'amount' is provided
         if (amount) {
             const sendButton = document.getElementById('sendSolana');
-            sendButton.innerText = `Send ${amount} SOL`;
+            sendButton.innerText = `Send ${amount}`;
             sendButton.disabled = false; // Enable the button if amount is provided
         }
 
